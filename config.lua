@@ -145,7 +145,7 @@ Config = {
 		},
 	},
 
-	shopsList = {
+	ShopsList = {
 		{ position = vector4(24.34, -1345.39, 28.49, 270.00), type = "24/7" },
 		{ position = vector4(372.92, 328.22, 102.56, 250.00), type = "24/7" },
 		{ position = vector4(2555.28, 380.81, 107.62, 0.00), type = "24/7" },

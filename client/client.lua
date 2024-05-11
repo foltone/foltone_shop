@@ -38,15 +38,7 @@ function RageUI.PoolMenus:FoltoneShopMenu()
             local item = Config.AisleProductList[FoltoneShop.AisleSelected][i]
             Items:AddButton(item.label, nil, { RightLabel = string.format("~g~%s$", item.price) }, function(onSelected)
                 if onSelected then
-                    local amount = 1
-                    local price = item.price * amount
-                    ESX.TriggerServerCallback("foltone_shop:buyItem", function(bought)
-                        if bought then
-                            Config.Notification(_U("bought", amount, item.label, price))
-                        else
-                            Config.Notification(_U("not_enough_money"))
-                        end
-                    end, item, amount)
+                    TriggerServerEvent("foltone_shop:buyItem", item.name, item.price)
                 end
             end)
         end
@@ -63,12 +55,11 @@ CreateThread(function()
     while not HasModelLoaded(GetHashKey(Config.PedModel)) do
         Wait(500)
     end
-    for i = 1, #Config.shopsList do
-        local shop = Config.shopsList[i]
+    for i = 1, #Config.ShopsList do
+        local shop = Config.ShopsList[i]
         local ped = CreatePed(4, GetHashKey(Config.PedModel), shop.position.x, shop.position.y, shop.position.z, shop.position.w, false, true)
         SetBlockingOfNonTemporaryEvents(ped, 1)
         FreezeEntityPosition(ped, true)
-        shop.ped = ped
         local blip = AddBlipForCoord(shop.position.x, shop.position.y, shop.position.z)
         SetBlipSprite(blip, Config.ShopBlip.id)
         SetBlipScale(blip, Config.ShopBlip.scale)
@@ -85,8 +76,8 @@ CreateThread(function()
         local playerPed = PlayerPedId()
         local playerCoords = GetEntityCoords(playerPed)
         local playerScoping = IsPlayerFreeAiming(PlayerId())
-        for i = 1, #Config.shopsList do
-            local shop = Config.shopsList[i]
+        for i = 1, #Config.ShopsList do
+            local shop = Config.ShopsList[i]
             local distance = #(playerCoords - vector3(shop.position.x, shop.position.y, shop.position.z))
             if distance <= 2.0 and not open then
                 wait = 0
@@ -118,4 +109,8 @@ end)
 RegisterNetEvent("esx:playerLoaded")
 AddEventHandler("esx:playerLoaded", function()
     ESX.PlayerLoaded = true
+end)
+RegisterNetEvent("foltone_shop:notification")
+AddEventHandler("foltone_shop:notification", function(message)
+    Config.Notification(message)
 end)

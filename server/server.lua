@@ -1,13 +1,18 @@
 ESX = exports["es_extended"]:getSharedObject()
 
-ESX.RegisterServerCallback("foltone_shop:buyItem", function(source, cb, item, amount)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local price = item.price * amount
+RegisterServerEvent("foltone_shop:buyItem")
+AddEventHandler("foltone_shop:buyItem", function(item, price)
+    local _source = source
+    local xPlayer = ESX.GetPlayerFromId(_source)
     if xPlayer.getMoney() >= price then
-        xPlayer.removeMoney(price)
-        xPlayer.addInventoryItem(item.name, amount)
-        cb(true)
+        if xPlayer.canCarryItem(item, 1) then
+            xPlayer.removeMoney(price)
+            xPlayer.addInventoryItem(item, 1)
+            TriggerClientEvent("foltone_shop:notification", _source, _U("bought", item.label, price))
+        else
+            TriggerClientEvent("foltone_shop:notification", _source, _U("not_enough_space"))
+        end
     else
-        cb(false)
+        TriggerClientEvent("foltone_shop:notification", _source, _U("not_enough_money"))
     end
 end)
