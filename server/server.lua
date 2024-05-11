@@ -8,7 +8,7 @@ AddEventHandler("foltone_shop:buyItem", function(item, price)
         if xPlayer.canCarryItem(item, 1) then
             xPlayer.removeMoney(price)
             xPlayer.addInventoryItem(item, 1)
-            TriggerClientEvent("foltone_shop:notification", _source, _U("bought", item.label, price))
+            TriggerClientEvent("foltone_shop:notification", _source, _U("bought", ESX.GetItemLabel(item), price))
         else
             TriggerClientEvent("foltone_shop:notification", _source, _U("not_enough_space"))
         end
